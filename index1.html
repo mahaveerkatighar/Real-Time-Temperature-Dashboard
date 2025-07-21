@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real-Time Temperature Dashboard by Mahaveer Katighar</title>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 40px; }
+    canvas { 
+      width: 90%; 
+      max-width: 1400px; /* Optional: prevents it from getting too wide */
+      margin: auto; 
+    }
+  </style>
+</head>
+<body>
+  <h2>🌡️ Real-Time Temperature Dashboard by Mahaveer Katighar</h2>
+  <canvas id="tempChart"></canvas>
+
+  <script>
+    // ✅ Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtUi3T0EfzYVipWZ524CDduOxQ6zOZxsk",
+      authDomain: "temperature-detection-101bc.firebaseapp.com",
+      databaseURL: "https://temperature-detection-101bc-default-rtdb.firebaseio.com",
+      projectId: "temperature-detection-101bc",
+      storageBucket: "temperature-detection-101bc.appspot.com",
+      messagingSenderId: "87745908468",
+      appId: "1:87745908468:web:0aad686534a393a78cd8a1"
+    };
+
+    // ✅ Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // ✅ Create Chart
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    const tempChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Temperature (°C)',
+          data: [],
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          x: { title: { display: true, text: 'Time' } },
+          y: { title: { display: true, text: '°C' }, suggestedMin: 0, suggestedMax: 50 }
+        }
+      }
+    });
+
+    // ✅ Listen for temperature data from Firebase
+    const today = new Date().toISOString().slice(0, 10); // e.g., "2025-07-21"
+    const historyRef = database.ref('temperature/history/' + today);
+
+    historyRef.on('value', snapshot => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const labels = [];
+      const temps = [];
+
+      Object.keys(data).forEach(time => {
+        labels.push(time);
+        // ⚠️ IMPORTANT: Make sure this key ('Celsius') matches your Firebase database!
+        temps.push(data[time].Celsius); 
+      });
+
+      tempChart.data.labels = labels;
+      tempChart.data.datasets[0].data = temps;
+      tempChart.update();
+    });
+  </script>
+</body>
+</html>
