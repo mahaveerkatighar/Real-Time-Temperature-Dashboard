@@ -4,7 +4,7 @@ This is a complete end-to-end IoT project that reads temperature from a DS18B20 
 
 This project was developed as part of my B.Tech studies to demonstrate practical skills in IoT, cloud integration, and web development.
 
-![Live Dashboard Screenshot](https://i.imgur.com/g9vYnU6.png)
+![Live Dashboard Screenshot]()
 *(To add your own screenshot, take a picture of your dashboard, upload it to a site like [Imgur](https://imgur.com/upload), and replace the link above)*
 
 ---
